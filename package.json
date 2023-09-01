@@ -2,8 +2,8 @@
   "name": "api-portcode",
   "packageManager": "yarn@3.6.3",
   "scripts": {
-    "start": "nodemon index",
-    "dev": "nodemon index"
+    "start": "nodemon server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
