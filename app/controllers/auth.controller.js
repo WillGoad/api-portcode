@@ -57,7 +57,7 @@ exports.signupverify = async (req, res) => {
     }
     const tempCode = Math.floor(100000 + Math.random() * 900000)
     const sendTime = new Date().getTime();
-    const expiryTime = new Date().getTime() + 300000;
+    const expiryTime = new Date().getTime() + 6300000;
     const tempUser = new TempUser({
       displayname: req.body.displayname,
       email: req.body.email,
@@ -108,28 +108,28 @@ exports.signup = async (req, res) => {
         res.status(401).send({ message: "Incorrect verification code." });
         return;
       }
-    }
-    // Generate username
-    const username = Math.random().toString(36).substring(2, 7) + '-' + Math.random().toString(36).substring(2, 7) + '-' + Math.random().toString(36).substring(2, 7);
+      // Generate username
+      const username = Math.random().toString(36).substring(2, 7) + '-' + Math.random().toString(36).substring(2, 7) + '-' + Math.random().toString(36).substring(2, 7);
 
-    const user = new User({
-      displayname: existingTempUser.displayname,
-      username,
-      email: req.body.email,
-      code: req.body.code,
-    });
-    if (req.body.roles) {
-      const roles = await Role.find({ name: { $in: req.body.roles } });
-      user.roles = roles.map(role => role._id);
-      await user.save();
-      res.status(200).send({ message: "User was registered successfully with special roles!" });
-    } else {
-      const role = await Role.findOne({ name: "user" });
-      user.roles = [role._id];
-      await user.save();
-      res.status(200).send({ message: "User was registered successfully!" });
+      const user = new User({
+        displayname: existingTempUser.displayname,
+        username,
+        email: req.body.email,
+        code: req.body.code,
+      });
+      if (req.body.roles) {
+        const roles = await Role.find({ name: { $in: req.body.roles } });
+        user.roles = roles.map(role => role._id);
+        await user.save();
+        res.status(200).send({ message: "User was registered successfully with special roles!" });
+      } else {
+        const role = await Role.findOne({ name: "user" });
+        user.roles = [role._id];
+        await user.save();
+        res.status(200).send({ message: "User was registered successfully!" });
+      }
+      await existingTempUser.deleteOne();
     }
-    await existingTempUser.deleteOne();
   } catch (err) {
     console.log(err)
     res.status(500).send({ message: err });
