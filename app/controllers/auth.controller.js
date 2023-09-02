@@ -8,7 +8,6 @@ const TempUser = db.tempuser;
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { default: EmailTemplate } = require('../components/emailTemplate');
 
 //Function to send verification codes by email
 const sendVerificationCode = async (email, code, name) => {
@@ -18,7 +17,7 @@ const sendVerificationCode = async (email, code, name) => {
     from: 'no-reply@portco.de', // Change to your verified sender
     subject: 'Verify your email address',
     text: 'Verification code:',
-    html: `${<EmailTemplate code={code} displayname={name}/>}`,
+    html: `<div style="display: flex;flex-direction:column;gap:5px;align-items:center;"><h3 style="font-family:Poppins,Helvetica,Arial,sans-serif;font-size:28px;font-weight:500;font-style:normal;letter-spacing:normal;line-height:36px;text-transform:none;padding:0;margin:0" class="text">Hi ${name}</h3><h4 class="text" style="color:#999;font-family:Poppins,Helvetica,Arial,sans-serif;font-size:16px;font-weight:500;font-style:normal;letter-spacing:normal;line-height:24px;text-transform:none;padding:0;margin:0">Here's your verification code</h4> <p style="color:#000;text-decoration:none;font-family:Poppins,Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;font-style:normal;letter-spacing:1px;line-height:20px;text-transform:uppercase;">${code}</p><p class="text" style="color:#666;font-family:'Open Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:400;font-style:normal;letter-spacing:normal;line-height:22px;text-transform:none;">Or click the link below</p><a href="https://app.portco.de/onboarding?verify=${code}" style="color:#000;text-decoration:none;font-family:Poppins,Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;font-style:normal;letter-spacing:1px;line-height:20px;text-decoration:none;" target="_blank" class="text">Verify Email</a></div>`,
   };
   try {
     await sgMail.send(msg);
