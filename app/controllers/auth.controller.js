@@ -10,14 +10,14 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 //Function to send verification codes by email
-const sendVerificationCode = async (email, code, name) => {
+const sendVerificationCode = async (email, code) => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   const msg = {
     to: email,
     from: 'no-reply@portco.de', // Change to your verified sender
     subject: 'Verify your email address',
     text: 'Verification code:',
-    html: `<p>Hi there</p><p>Here's your verification code: ${code}</p><p>Or click the link below</p><a href="https://app.portco.de/onboarding?verify=${code}">Verify Email</a>`,
+    html: `<p>Hi there</p><p>Here's your verification code: ${code}</p><p>Or click the link below</p><a href="https://app.portco.de/onboarding?verify=${code}&email=${email}">Verify Email</a>`,
   };
   try {
     await sgMail.send(msg);
@@ -46,7 +46,7 @@ exports.signupverify = async (req, res) => {
           return;
         } else {
           //Send new code
-          sendVerificationCode(req.body.email, tempCode, req.body.displayname);
+          await sendVerificationCode(req.body.email, tempCode);
           res.status(200).send({ message: "New code sent!" });
           return;
         }
@@ -66,8 +66,8 @@ exports.signupverify = async (req, res) => {
       sendTime
     });
     await tempUser.save();
-    sendVerificationCode(req.body.email, tempCode, req.body.displayname);
-    res.status(200).send({ message: "User was temporarily registered successfully!" });
+    await sendVerificationCode(req.body.email, tempCode);
+    res.status(200).send({ message: "Verification code sent!" });
   } catch (err) {
     res.status(500).send({ message: err });
     return;
@@ -97,10 +97,12 @@ exports.signup = async (req, res) => {
     //Check for temp user and confirm code correct and hasn't expired
     const existingTempUser = await TempUser.findOne({ email: req.body.email });
     if (existingTempUser) {
+      console.log("Display name" + existingTempUser.displayname);
       if (existingTempUser.verificationcode === req.body.code) {
         if (existingTempUser.expiryTime < new Date().getTime()) {
           //Delete old user
-          await existingTempUser.deleteOne();
+          // await existingTempUser.deleteOne();
+          console.log("Existed but expired");
           res.status(401).send({ message: "Verification code expired. Please request a new one." });
           return;
         }
@@ -115,7 +117,6 @@ exports.signup = async (req, res) => {
         displayname: existingTempUser.displayname,
         username,
         email: req.body.email,
-        code: req.body.code,
       });
       if (req.body.roles) {
         const roles = await Role.find({ name: { $in: req.body.roles } });
