@@ -18,7 +18,7 @@ const sendVerificationCode = async (email, code, name) => {
     from: 'no-reply@portco.de', // Change to your verified sender
     subject: 'Verify your email address',
     text: 'Verification code:',
-    html: <EmailTemplate code={code} displayname={name}/>,
+    html: `${<EmailTemplate code={code} displayname={name}/>}`,
   };
   try {
     await sgMail.send(msg);
