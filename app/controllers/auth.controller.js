@@ -8,16 +8,17 @@ const TempUser = db.tempuser;
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { default: EmailTemplate } = require('../components/emailTemplate');
 
 //Function to send verification codes by email
-const sendVerificationCode = async (email, code) => {
+const sendVerificationCode = async (email, code, name) => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   const msg = {
     to: email,
     from: 'no-reply@portco.de', // Change to your verified sender
     subject: 'Verify your email address',
     text: 'Verification code:',
-    html: `<strong>${code}</strong>`,
+    html: <EmailTemplate code={code} displayname={name}/>,
   };
   try {
     await sgMail.send(msg);
@@ -46,7 +47,7 @@ exports.signupverify = async (req, res) => {
           return;
         } else {
           //Send new code
-          sendVerificationCode(req.body.email, tempCode);
+          sendVerificationCode(req.body.email, tempCode, req.body.displayname);
           res.status(200).send({ message: "New code sent!" });
           return;
         }
@@ -66,7 +67,7 @@ exports.signupverify = async (req, res) => {
       sendTime
     });
     await tempUser.save();
-    sendVerificationCode(req.body.email, tempCode);
+    sendVerificationCode(req.body.email, tempCode, req.body.displayname);
     res.status(200).send({ message: "User was temporarily registered successfully!" });
   } catch (err) {
     res.status(500).send({ message: err });
