@@ -59,7 +59,7 @@ exports.signupverify = async (req, res) => {
     const sendTime = new Date().getTime();
     const expiryTime = new Date().getTime() + 6300000;
     const tempUser = new TempUser({
-      displayname: req.body.displayname,
+      displayname: req.body.name,
       email: req.body.email,
       verificationcode: tempCode,
       expiryTime,
@@ -97,7 +97,6 @@ exports.signup = async (req, res) => {
     //Check for temp user and confirm code correct and hasn't expired
     const existingTempUser = await TempUser.findOne({ email: req.body.email });
     if (existingTempUser) {
-      console.log("Display name" + existingTempUser.displayname);
       if (existingTempUser.verificationcode === req.body.code) {
         if (existingTempUser.expiryTime < new Date().getTime()) {
           //Delete old user
