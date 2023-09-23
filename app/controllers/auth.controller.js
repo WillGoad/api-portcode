@@ -1,6 +1,5 @@
 const sgMail = require('@sendgrid/mail')
 
-const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
@@ -26,6 +25,14 @@ const sendVerificationCode = async (email, code) => {
     return;
   }
 }
+
+const signToken = id => jwt.sign({ id },
+  process.env.JWT_SECRET,
+  {
+    algorithm: 'HS256',
+    allowInsecureKeySizes: true,
+    expiresIn: 86400, // 24 hours
+  });
 
 exports.signupverify = async (req, res) => {
   try {
@@ -126,7 +133,14 @@ exports.signup = async (req, res) => {
         const role = await Role.findOne({ name: "user" });
         user.roles = [role._id];
         await user.save();
-        res.status(200).send({ message: "User was registered successfully!" });
+        const token = signToken(user.id);
+        res.status(200).send({
+          message: "User was registered successfully!",
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          accessToken: token
+        });
       }
       await existingTempUser.deleteOne();
     }
@@ -153,13 +167,7 @@ exports.signin = async (req, res) => {
         message: "Invalid Password!"
       });
     }
-    const token = jwt.sign({ id: user.id },
-      config.secret,
-      {
-        algorithm: 'HS256',
-        allowInsecureKeySizes: true,
-        expiresIn: 86400, // 24 hours
-      });
+    const token = signToken(user.id);
     const authorities = [];
     for (let i = 0; i < user.roles.length; i++) {
       authorities.push("ROLE_" + user.roles[i].name.toUpperCase());

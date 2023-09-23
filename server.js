@@ -1,4 +1,3 @@
-const dbConfig = require("./app/config/db.config.js");
 const express = require("express");
 const cors = require("cors");
 require('dotenv').config();
@@ -21,7 +20,7 @@ const db = require("./app/models");
 const Role = db.role;
 const dbConnect = async () => {
   try {
-    await db.mongoose.connect(`mongodb+srv://${dbConfig.USER}:${dbConfig.PASS}@cluster0.isdu0x1.mongodb.net/${dbConfig.DB}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
+    await db.mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.isdu0x1.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
     console.log("Successfully connect to MongoDB.");
     initial();
   } catch (err) {
