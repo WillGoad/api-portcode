@@ -208,7 +208,7 @@ exports.signin = async (req, res) => {
       return;
     }
 
-    const token = signToken(user.id);
+    const token = signToken(existingUser._id);
     res.status(200).send({
       message: "User signed in successfully!",
       id: user._id,
@@ -216,7 +216,7 @@ exports.signin = async (req, res) => {
       email: user.email,
       accessToken: token
     });
-
+    return;
   } catch (err) {
     console.log(err)
     res.status(500).send({ message: err });
