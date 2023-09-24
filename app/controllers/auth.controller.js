@@ -34,7 +34,7 @@ const signToken = id => jwt.sign({ id },
     expiresIn: 86400, // 24 hours
   });
 
-exports.signupverify = async (req, res) => {
+exports.verifysignup = async (req, res) => {
   try {
     //Check if email is already in use
     const existingUser = await User.findOne({ email: req.body.email });
@@ -151,35 +151,74 @@ exports.signup = async (req, res) => {
   }
 };
 
+exports.verifysignin = async (req, res) => {
+  try {
+    //Check if email is already in use
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (!existingUser) {
+      res.status(401).send({ message: "Email not found." });
+      return;
+    }
+
+    //Code exists and code hasn't expired
+    //Send time is less than a minute ago
+    if (existingUser.verificationcode && existingUser.expiryTime > new Date().getTime() && existingUser.sendTime > new Date().getTime() - (1000 * 60)) {
+      res.status(425).send({ message: "Please wait a minute before requesting another verification code." });
+      return;
+    }
+
+    //Send new code
+    const tempCode = Math.floor(100000 + Math.random() * 900000)
+    const sendTime = new Date().getTime();
+    const expiryTime = new Date().getTime() + (1000 * 60 * 5); //5 minutes in ms
+
+    await sendVerificationCode(req.body.email, tempCode);
+    existingUser.verificationcode = tempCode;
+    existingUser.expiryTime = expiryTime;
+    existingUser.sendTime = sendTime;
+    await existingUser.save();
+    res.status(200).send({ message: "Verification code sent!" });
+    return;
+
+  } catch (err) {
+    res.status(500).send({ message: err });
+    return;
+  }
+}
+
 exports.signin = async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.body.username }).populate("roles", "-__v").exec();
-    if (!user) {
-      return res.status(404).send({ message: "User Not found." });
+    //Check if email is already in use
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (!existingUser) {
+      res.status(401).send({ message: "No account found with that email." });
+      return;
     }
-    const passwordIsValid = bcrypt.compareSync(
-      req.body.password,
-      user.password
-    );
-    if (!passwordIsValid) {
-      return res.status(401).send({
-        accessToken: null,
-        message: "Invalid Password!"
-      });
+
+    //Code expired
+    if (existingUser.expiryTime < new Date().getTime()) {
+      res.status(401).send({ message: "Verification code expired. Please request a new one." });
+      return;
+
     }
+
+    //Code incorrect
+    if (existingUser.verificationcode !== req.body.code) {
+      res.status(401).send({ message: "Incorrect verification code." });
+      return;
+    }
+
     const token = signToken(user.id);
-    const authorities = [];
-    for (let i = 0; i < user.roles.length; i++) {
-      authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
-    }
     res.status(200).send({
+      message: "User signed in successfully!",
       id: user._id,
       username: user.username,
       email: user.email,
-      roles: authorities,
       accessToken: token
     });
+
   } catch (err) {
+    console.log(err)
     res.status(500).send({ message: err });
     return;
   }
