@@ -211,6 +211,8 @@ exports.signin = async (req, res) => {
     const token = signToken(existingUser._id);
     res.status(200).send({
       message: "User signed in successfully!",
+      username: existingUser.displayname,
+      email: existingUser.email,
       accessToken: token
     });
     return;
