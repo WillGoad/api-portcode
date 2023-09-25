@@ -137,7 +137,7 @@ exports.signup = async (req, res) => {
         res.status(200).send({
           message: "User was registered successfully!",
           id: user._id,
-          username: user.username,
+          displayname: user.displayname,
           email: user.email,
           accessToken: token
         });
@@ -211,7 +211,7 @@ exports.signin = async (req, res) => {
     const token = signToken(existingUser._id);
     res.status(200).send({
       message: "User signed in successfully!",
-      username: existingUser.displayname,
+      displayname: existingUser.displayname,
       email: existingUser.email,
       accessToken: token
     });
