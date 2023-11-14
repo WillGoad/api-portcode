@@ -13,7 +13,7 @@ module.exports = function(app) {
   app.get(
     "/api/live-editor",
     [authJwt.verifyToken],
-    controller.signup
+    controller.getUserInfo
   );
 
 //   app.post(
