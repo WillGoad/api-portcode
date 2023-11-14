@@ -31,7 +31,7 @@ const signToken = id => jwt.sign({ id },
   {
     algorithm: 'HS256',
     allowInsecureKeySizes: true,
-    expiresIn: 86400, // 24 hours
+    expiresIn: 86400 * 30, // 24 hours * 30 days
   });
 
 exports.verifysignup = async (req, res) => {
@@ -80,16 +80,6 @@ exports.verifysignup = async (req, res) => {
     return;
   }
 }
-
-
-/*
-The signup function should:
-1. Take email and verification code
-1.2. If email is already in use, return error
-2. Check DB for temp user with email and confirm code is correct and hasn't expired
-3. If code is correct, create user in DB and delete temp user, if email isn't already in use
-NB: Use display name and email from temp user, create new unique username in format XXXXX-XXXXX-XXXXX(randomly generated) and user role
-*/
 
 //Checks code and creates user account
 exports.signup = async (req, res) => {
