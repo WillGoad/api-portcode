@@ -18,7 +18,7 @@ exports.getUserInfo = async (req, res) => {
 
     // Extract the necessary user information
     const userInfo = {
-      displayName: user.displayName,
+      displayname: user.displayname,
       username: user.username,
       email: user.email
     };
