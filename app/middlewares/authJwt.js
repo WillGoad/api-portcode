@@ -12,14 +12,14 @@ verifyToken = (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.id;
+    next();
   } catch (err) {
     console.log(err);
     return res.status(401).send({
       message: "Unauthorized!",
     });
   }
-  req.userId = decoded.id;
-  next();
 };
 
 isAdmin = (req, res, next) => {
