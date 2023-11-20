@@ -38,7 +38,6 @@ exports.verifysignup = async (req, res) => {
   try {
     //Check if email is already in use
     const existingUser = await User.findOne({ email: req.body.email });
-    console.log(existingUser);
     if (existingUser) {
       res.status(401).send({ message: "Email is already in use." });
       return;
@@ -86,7 +85,6 @@ exports.signup = async (req, res) => {
   try {
     //Check if email is already in use
     const existingUser = await User.findOne({ email: req.body.email });
-    console.log(existingUser);
     if (existingUser) {
       res.status(401).send({ message: "Email is already in use." });
       return;

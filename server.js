@@ -17,38 +17,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = require("./app/models");
-const Role = db.role;
 const dbConnect = async () => {
   try {
     await db.mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.isdu0x1.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
     console.log("Successfully connect to MongoDB.");
-    initial();
   } catch (err) {
     console.error("Connection error", err);
     process.exit();
   }
 }
 dbConnect();
-
-
-
-const initial = async () => {
-  try {
-    const count = await Role.estimatedDocumentCount();
-    if (count === 0) {
-      try {
-        new Role({ name: "user" }).save();
-        new Role({ name: "moderator" }).save();
-        new Role({ name: "admin" }).save();
-        console.log("added 'user', 'moderator', 'admin' to roles collection");
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
 
 // simple route
 app.get("/", (req, res) => {
