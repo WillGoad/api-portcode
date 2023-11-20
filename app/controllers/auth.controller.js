@@ -6,7 +6,6 @@ const Role = db.role;
 const TempUser = db.tempuser;
 
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
 
 //Function to send verification codes by email
 const sendVerificationCode = async (email, code) => {
