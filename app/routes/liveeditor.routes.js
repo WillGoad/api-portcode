@@ -16,15 +16,9 @@ module.exports = function(app) {
     controller.getUserInfo
   );
 
-//   app.post(
-//     "/api/auth/signup-verify",
-//     controller.verifysignup
-//   );
-
-//   app.post(
-//     "/api/auth/signin-verify",
-//     controller.verifysignin
-//   );
-
-//   app.post("/api/auth/signin", controller.signin);
+  app.put(
+    "/api/live-editor",
+    [authJwt.verifyToken],
+    controller.updateUserInfo
+  );
 };

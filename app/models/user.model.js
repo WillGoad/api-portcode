@@ -9,12 +9,8 @@ const User = mongoose.model(
     verificationcode: String,
     expiryTime: Date,
     sendTime: Date,
-    roles: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role"
-      }
-    ]
+    highlightedRepo: String,
+    experiences: [String]
   })
 );
 
