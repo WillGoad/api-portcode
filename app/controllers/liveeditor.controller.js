@@ -6,7 +6,7 @@ const User = require('../models/user.model');
 exports.getUserInfo = async (req, res) => {
   try {
     // Get the current user's ID from the request object
-    const userId = req.user.id;
+    const userId = req.userId;
 
     // Find the user in the database by their ID
     const user = await User.findById(userId);
