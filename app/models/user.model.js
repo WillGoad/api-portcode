@@ -11,7 +11,8 @@ const User = mongoose.model(
     expiryTime: Date,
     sendTime: Date,
     highlightedRepo: String,
-    experiences: [String]
+    experiences: [String],
+    portfolioOnline: { type: Boolean, default: false },
   })
 );
 
