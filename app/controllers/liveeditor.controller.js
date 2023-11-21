@@ -1,9 +1,5 @@
 const QRCode = require('qrcode');
 const User = require('../models/user.model');
-const db = require('../models');
-const upload = require('../middlewares/upload');
-const mongoose = require('mongoose');
-const GridFSBucket = mongoose.mongo.GridFSBucket;
 
 // Define the controller function
 exports.getUserInfo = async (req, res) => {
@@ -50,6 +46,11 @@ exports.updateUserInfo = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+
+    if(user.portfolioOnline == false) {
+      user.portfolioOnline = true;
+      await user.save();
     }
 
     res.status(200).json({ message: 'User updated successfully' });
