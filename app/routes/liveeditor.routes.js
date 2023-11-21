@@ -21,4 +21,16 @@ module.exports = function(app) {
     [authJwt.verifyToken],
     controller.updateUserInfo
   );
+
+  app.post(
+    "/api/live-editor",
+    [authJwt.verifyToken],
+    controller.createNewQRCode
+  );
+
+  app.get(
+    "/api/live-editor",
+    [authJwt.verifyToken],
+    controller.getQRCode
+  );
 };
