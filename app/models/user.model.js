@@ -6,6 +6,7 @@ const User = mongoose.model(
     displayname: String,
     username: String,
     email: String,
+    qrcodeuri: String,
     verificationcode: String,
     expiryTime: Date,
     sendTime: Date,

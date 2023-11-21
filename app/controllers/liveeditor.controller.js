@@ -1,5 +1,4 @@
 const QRCode = require('qrcode');
-// Import any necessary modules and dependencies
 const User = require('../models/user.model');
 const db = require('../models');
 const upload = require('../middlewares/upload');
@@ -58,33 +57,6 @@ exports.updateUserInfo = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
-}
-
-exports.createNewQRCode = async (req, res) => {
-  try {
-    const userId = req.userId;
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Step 2: Generate QR code
-    const qrCodeData = await QRCode.toDataURL(`portco.de/${user.username}`);
-
-    // Step 3: Upload the QR code image using the upload middleware
-    // Assuming the upload middleware is already set up
-    const qrCodeImage = await upload(qrCodeData);
-
-    // Step 4: Update the user's qrcodeimage field with the filename of the uploaded image
-    user.qrcodeimage = qrCodeImage.filename;
-    await user.save();
-
-    res.status(200).json({ message: 'QR code created successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
 };
 
 exports.getQRCode = async (req, res) => {
@@ -96,20 +68,14 @@ exports.getQRCode = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    if (!user.qrcodeimage) {
-      return res.status(404).json({ message: 'QR code not found' });
+    if (!user.qrcodeuri) {
+      const qrCodeData = await QRCode.toDataURL(`https://portco.de/${user.username}`);
+
+      user.qrcodeuri = qrCodeData;
+      await user.save();
     }
 
-    const bucket = new GridFSBucket(db.mongoose.connection.db, {
-      bucketName: 'uploads'
-    });
-
-    // Get the QR code image file from GridFS
-    const qrCodeImage = bucket.openDownloadStreamByName(user.qrcodeimage);
-
-    // Set the content type and pipe the image file to the response
-    res.set('content-type', 'image/png');
-    qrCodeImage.pipe(res);
+    res.status(200).json({ qrcodeuri: user.qrcodeuri });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

@@ -22,12 +22,6 @@ module.exports = function(app) {
     controller.updateUserInfo
   );
 
-  app.post(
-    "/api/qr-code",
-    [authJwt.verifyToken],
-    controller.createNewQRCode
-  );
-
   app.get(
     "/api/qr-code",
     [authJwt.verifyToken],
