@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 const db = require("./app/models");
 const dbConnect = async () => {
   try {
-    await db.mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.isdu0x1.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
+    await db.mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.isdu0x1.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`)
     console.log("Successfully connect to MongoDB.");
   } catch (err) {
     console.error("Connection error", err);
