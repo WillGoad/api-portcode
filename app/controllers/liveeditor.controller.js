@@ -2,6 +2,9 @@ const QRCode = require('qrcode');
 // Import any necessary modules and dependencies
 const User = require('../models/user.model');
 const db = require('../models');
+const upload = require('../middlewares/upload');
+const mongoose = require('mongoose');
+const GridFSBucket = mongoose.mongo.GridFSBucket;
 
 // Define the controller function
 exports.getUserInfo = async (req, res) => {
