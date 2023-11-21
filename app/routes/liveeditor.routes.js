@@ -23,13 +23,13 @@ module.exports = function(app) {
   );
 
   app.post(
-    "/api/live-editor",
+    "/api/qr-code",
     [authJwt.verifyToken],
     controller.createNewQRCode
   );
 
   app.get(
-    "/api/live-editor",
+    "/api/qr-code",
     [authJwt.verifyToken],
     controller.getQRCode
   );
