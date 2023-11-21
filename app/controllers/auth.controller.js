@@ -2,7 +2,6 @@ const sgMail = require('@sendgrid/mail')
 
 const db = require("../models");
 const User = db.user;
-const Role = db.role;
 const TempUser = db.tempuser;
 
 const jwt = require("jsonwebtoken");
@@ -111,25 +110,17 @@ exports.signup = async (req, res) => {
         username,
         email: req.body.email,
       });
-      if (req.body.roles) {
-        const roles = await Role.find({ name: { $in: req.body.roles } });
-        user.roles = roles.map(role => role._id);
-        await user.save();
-        res.status(200).send({ message: "User was registered successfully with special roles!" });
-      } else {
-        const role = await Role.findOne({ name: "user" });
-        user.roles = [role._id];
-        await user.save();
-        const token = signToken(user.id);
-        res.status(200).send({
-          message: "User was registered successfully!",
-          id: user._id,
-          username: user.username,
-          displayname: user.displayname,
-          email: user.email,
-          accessToken: token
-        });
-      }
+      await user.save();
+      const token = signToken(user.id);
+      res.status(200).send({
+        message: "User was registered successfully!",
+        id: user._id,
+        username: user.username,
+        displayname: user.displayname,
+        email: user.email,
+        accessToken: token
+      });
+
       await existingTempUser.deleteOne();
     }
   } catch (err) {
