@@ -37,6 +37,7 @@ app.get("/", (req, res) => {
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
 require('./app/routes/liveeditor.routes')(app);
+require('./app/routes/public.routes')(app);
 
 
 // set port, listen for requests
