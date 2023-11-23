@@ -13,13 +13,19 @@ exports.getUserInfo = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    if (!user.qrcodeuri) {
+      const qrCodeData = await QRCode.toDataURL(`https://portco.de/${user.username}`);
+
+      user.qrcodeuri = qrCodeData;
+    }
+
     // Extract the necessary user information
     const userInfo = {
       displayname: user.displayname,
       username: user.username,
-      email: user.email,
       highlightedRepo: user.highlightedRepo,
       experiences: user.experiences,
+      qrcodeuri: user.qrcodeuri
     };
 
     // Return the user information in the response

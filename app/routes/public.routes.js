@@ -1,4 +1,4 @@
-const controller = require("../controllers/liveeditor.controller");
+const controller = require("../controllers/public.controller");
 
 module.exports = function (app) {
     app.get(
