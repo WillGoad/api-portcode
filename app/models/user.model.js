@@ -12,6 +12,8 @@ const User = mongoose.model(
     sendTime: Date,
     highlightedRepo: String,
     experiences: [String],
+    education: [String],
+    skills: [String],
     portfolioOnline: { type: Boolean, default: false },
   })
 );

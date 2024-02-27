@@ -22,6 +22,8 @@ exports.getUserInfo = async (req, res) => {
       email: user.email,
       highlightedRepo: user.highlightedRepo,
       experiences: user.experiences,
+      education: user.education,
+      skills: user.skills,
     };
 
     // Return the user information in the response
@@ -36,11 +38,11 @@ exports.getUserInfo = async (req, res) => {
 exports.updateUserInfo = async (req, res) => {
   try {
     const userId = req.userId;
-    const { highlightedRepo, experiences } = req.body;
+    const { highlightedRepo, experiences, education, skills } = req.body;
 
     const user = await User.findByIdAndUpdate(
       userId,
-      { highlightedRepo, experiences },
+      { highlightedRepo, experiences, education, skills },
       { new: true }
     );
 
