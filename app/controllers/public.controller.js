@@ -25,6 +25,8 @@ exports.getUserInfo = async (req, res) => {
       username: user.username,
       highlightedRepo: user.highlightedRepo,
       experiences: user.experiences,
+      education: user.education,
+      skills: user.skills,
       qrcodeuri: user.qrcodeuri
     };
 
